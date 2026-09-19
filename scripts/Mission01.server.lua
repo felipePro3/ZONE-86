@@ -1,5 +1,4 @@
 
-
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -67,7 +66,8 @@ cityObjective.Touched:Connect(function(hit)
 
     local progress = missionProgress[player]
 
-    if progress and not progress.visitedCity
+    if progress
+        and not progress.visitedCity
         and not progress.completed then
 
         progress.visitedCity = true
@@ -116,66 +116,5 @@ missionEvent.OnServerEvent:Connect(function(player)
         sendProgress(player, "return")
     else
         sendProgress(player, "explore")
-    end
-end)
-
-
-Players.PlayerRemoving:Connect(function(player)
-    missionProgress[player] = nil
-end)
-
-local function getPlayerFromTouch(hit)
-    local character = hit:FindFirstAncestorOfClass("Model")
-
-    if not character then
-        return nil
-    end
-
-    local humanoid = character:FindFirstChildOfClass("Humanoid")
-
-    if not humanoid then
-        return nil
-    end
-
-    return Players:GetPlayerFromCharacter(character)
-end
-
-cityObjective.Touched:Connect(function(hit)
-    local player = getPlayerFromTouch(hit)
-
-    if not player then
-        return
-    end
-
-    local progress = missionProgress[player]
-
-    if progress and not progress.completed then
-        progress.visitedCity = true
-    end
-end)
-
-baseDelivery.Touched:Connect(function(hit)
-    local player = getPlayerFromTouch(hit)
-
-    if not player then
-        return
-    end
-
-    local progress = missionProgress[player]
-
-    if not progress
-        or not progress.visitedCity
-        or progress.completed then
-        return
-    end
-
-    progress.completed = true
-
-    local leaderstats = player:FindFirstChild("leaderstats")
-    local credits = leaderstats
-        and leaderstats:FindFirstChild("Creditos")
-
-    if credits then
-        credits.Value += REWARD
     end
 end)
